@@ -1,48 +1,65 @@
-import java.util.Arrays;
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-class Main {
-    private static int V; // V개의 마을
-    private static int E; // E개의 도로
-    private static int[][] distance; // 도로의 최소거리
-    private static int INF = 10000 * 400 + 1;
-    private static int answer = 10000 * 400 + 1;
+public class Main {
+    static int V, E;
+    static int MIN;
+    static int[][] distance;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st;
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        V = sc.nextInt();
-        E = sc.nextInt();
+        st = new StringTokenizer(br.readLine());
+        V = Integer.parseInt(st.nextToken());
+        E = Integer.parseInt(st.nextToken());
+
         distance = new int[V + 1][V + 1];
-        //초기화
-        for (int i = 1; i <= V; i++) {
-            Arrays.fill(distance[i], INF);
-        }
-        for (int i = 0; i < E; i++) {
-            int start = sc.nextInt(); // a번 마을
-            int end = sc.nextInt(); // b번 마을
-            int cost = sc.nextInt();
-            distance[start][end] = cost; //(a, b) 쌍이 같은 도로가 여러 번 주어지지 않는다.
-            // distance[end][start] = cost; // (a → b임에 주의)
-        }
-        floyd();
-        // 최소 사이클 중 최솟값을 구한다.
-        for (int i = 1; i <= V; i++) {
-            answer = Math.min(distance[i][i], answer);
-        }
-        if (answer == INF) {
-            System.out.println(-1);
-        } else {
-            System.out.println(answer);
-        }
-    }
 
-    private static void floyd() {
-        for (int k = 1; k <= V; k++) {
-            for (int i = 1; i <= V; i++) {
-                for (int j = 1; j <= V; j++) {
-                    distance[i][j] = Math.min(distance[i][k] + distance[k][j], distance[i][j]);
+        // 최소거리의 초기값 지정
+        MIN = 1000000000;
+
+        // 같은 마을이 입력될 때에는 거리 0, 아니라면 INF로 일단 저장(초기화)
+        for (int i = 1; i <= V; i++) {
+            for (int j = 1; j <= V; j++) {
+                if (i == j) {
+                    distance[i][j] = 0;
+                } else {
+                    distance[i][j] = 1000000000;
                 }
             }
         }
+
+        // 각 마을을 연결하는 도로 저장
+        for (int i = 0; i < E; i++) {
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+
+            distance[a][b] = c;
+        }
+
+        for (int k = 1; k <= V; k++) {
+            for (int i = 1; i <= V; i++) {
+                for (int j = 1; j <= V; j++) {
+                    distance[j][k] = Math.min(distance[j][k], distance[j][i] + distance[i][k]);
+                }
+            }
+        }
+
+        boolean check = false;
+
+        for (int i = 1; i <= V; i++) {
+            for (int j = 1; j <= V; j++) {
+                if (i != j && distance[i][j] != 1000000000 && distance[j][i] != 1000000000) {
+                    MIN = Math.min(distance[i][j] + distance[j][i], MIN);
+                    check = true;
+                }
+            }
+        }
+
+        System.out.println(check ? MIN : -1);
     }
 }
