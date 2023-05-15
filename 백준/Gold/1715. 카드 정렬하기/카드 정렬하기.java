@@ -1,29 +1,27 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.PriorityQueue;
 
 public class Main {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+
         int N = Integer.parseInt(br.readLine());
-        PriorityQueue<Long> cards = new PriorityQueue<>();
-        long result = 0;
+        PriorityQueue<Integer> pq = new PriorityQueue<>();
 
-        for(int i = 0; i < N; i++) {
-            cards.add(Long.parseLong(br.readLine()));
+        for (int i = 0; i < N; i++) {
+            pq.offer(Integer.parseInt(br.readLine()));
         }
 
-        while(cards.size() > 1) {
-            long num1 = cards.poll();
-            long num2 = cards.poll();
-            result += num1 + num2;
-            cards.add(num1 + num2);
+        int answer = 0;
+        while(pq.size() > 1){
+            int a = pq.poll();
+            int b = pq.poll();
+            answer += a+b;
+            pq.offer(a+b);
         }
 
-        System.out.println(result);
+        System.out.println(answer);
     }
 }
