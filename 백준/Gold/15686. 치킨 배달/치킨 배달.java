@@ -1,3 +1,6 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public class Main {
@@ -9,16 +12,19 @@ public class Main {
     static ArrayList<Node> house = new ArrayList<>(); // 집의 위치 저장
     static boolean[] visited; // 뽑은 치킨집 체크
 
-    public static void main(String[] args) {
-        Scanner scan = new Scanner(System.in);
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
 
-        n = scan.nextInt();
-        m = scan.nextInt();
+        n = Integer.parseInt(st.nextToken());
+        m = Integer.parseInt(st.nextToken());
 
         map = new int[n][n];
         for(int i = 0; i < n; i++) {
+            st = new StringTokenizer(br.readLine());
+
             for(int j = 0; j < n; j++) {
-                map[i][j] = scan.nextInt();
+                map[i][j] = Integer.parseInt(st.nextToken());
                 if(map[i][j] == 1) house.add(new Node(i, j));
                 else if(map[i][j] == 2) chicken.add(new Node(i, j));
             }
@@ -30,12 +36,13 @@ public class Main {
     }
 
     public static void backtracking(int count, int idx) {
-        if(count == m) { //치킨 거리의 최솟값을 구한다.
+        if(count == m) { //치킨 거리의 최솟값을 구한다
             int total = 0; // 도시의 치킨거리
             for(int i = 0; i < house.size(); i++) {
                 int sum = Integer.MAX_VALUE;
                 for(int j = 0; j < chicken.size(); j++) {
-                    if(visited[j] == true) { //i번째 집에서부터 j번짜 치킨집 까지의 거리 중 최소값을 구한다.
+                    if(visited[j] == true) { 
+                        // i번째 집에서부터 j번짜 치킨집 까지의 거리 중 최소값을 구한다
                         int dist = Math.abs(house.get(i).x - chicken.get(j).x)
                                 + Math.abs(house.get(i).y - chicken.get(j).y);
                         sum = Math.min(sum, dist);
