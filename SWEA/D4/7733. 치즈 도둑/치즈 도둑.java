@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.StringTokenizer;
@@ -44,22 +45,22 @@ public class Solution {
 			maxCnt = Integer.MIN_VALUE;
 			while (day <= 100) {
 				cnt = 0;
-				visited = new boolean[N][N];
+				
 				for (int r = 0; r < N; r++) {
 					for (int c = 0; c < N; c++) {
-						if (cheese[r][c] == day && !visited[r][c]) {
-							bfs(r, c);
+						if (cheese[r][c] == day) {
+							cheese[r][c] = 0;
 						}
 					}
 				}
 
 				// 치즈 존재하는 부분 개수 세기
-				visited = new boolean[N][N];
+				resetVisit();
 				for (int r = 0; r < N; r++) {
 					for (int c = 0; c < N; c++) {
 						if (cheese[r][c] > 0 && !visited[r][c]) {
 							// 비슷한 메서드 만들기
-							isCheese(r, c);
+							bfs(r, c);
 							cnt++;
 						}
 					}
@@ -83,34 +84,6 @@ public class Solution {
 		Queue<int[]> queue = new LinkedList<>();
 		queue.add(new int[] {r, c});
 		visited[r][c] = true;
-		cheese[r][c] = 0;
-		
-		while (!queue.isEmpty()) {
-			int[] input = queue.poll();
-			int x = input[0];
-			int y = input[1];
-			
-			for (int d = 0; d < 4; d++) {
-				int nr = x + dr[d];
-				int nc = y + dc[d];
-				
-				if (nr < 0 || nr >= N || nc < 0 || nc >= N) continue;
-				
-				if (cheese[nr][nc] == day && !visited[nr][nc]) {
-					queue.add(new int[] {nr, nc});
-					visited[nr][nc] = true;
-					
-					cheese[nr][nc] = 0;
-				}
-			}
-		}
-
-	}
-
-	private static void isCheese(int r, int c) {
-		Queue<int[]> queue = new LinkedList<>();
-		queue.add(new int[] {r, c});
-		visited[r][c] = true;
 		
 		while (!queue.isEmpty()) {
 			int[] input = queue.poll();
@@ -130,6 +103,12 @@ public class Solution {
 			}
 		}
 		
+	}
+	
+	private static void resetVisit() {
+		for (int i = 0; i < N; i++) {
+			Arrays.fill(visited[i], false);
+		}
 	}
 	
 }
