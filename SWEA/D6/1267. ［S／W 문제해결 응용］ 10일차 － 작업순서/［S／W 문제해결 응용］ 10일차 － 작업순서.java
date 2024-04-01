@@ -1,7 +1,8 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Stack;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
 public class Solution {
@@ -9,8 +10,7 @@ public class Solution {
 	static int V, E;
 	static int[][] adj;
 	static int[] degree;
-	static boolean[] visited;
-	static Stack<Integer> stack;
+	static Queue<Integer> queue;
 	
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -30,8 +30,7 @@ public class Solution {
 			
 			adj = new int[V + 1][V + 1];
 			degree = new int[V + 1];
-			visited = new boolean[V + 1];
-			stack = new Stack<>();
+			
 			
 			st = new StringTokenizer(br.readLine());
 			
@@ -43,29 +42,29 @@ public class Solution {
 				degree[B]++;
 			}
 			
+			queue = new LinkedList<>();
+			
 			for (int i = 1; i < V + 1; i++) {
 				if (degree[i] == 0)
-					dfs(i);
+					queue.offer(i);
 			}
 			
-			while (!stack.isEmpty()) {
-				sb.append(stack.pop() + " ");
+			while (!queue.isEmpty()) {
+				int curr = queue.poll();
+				sb.append(curr + " ");
+				
+				for (int i = 1; i < V + 1; i++) {
+					if (adj[curr][i] == 1) {
+						degree[i]--;
+						adj[curr][i] = 0;
+						
+						if (degree[i] == 0)
+							queue.offer(i);
+					}
+				}
 			}
 			
 			System.out.println(sb);
 		}
-		
-	}
-	
-	static void dfs(int v) {
-		visited[v] = true;
-		
-		for (int i = 1; i < V + 1; i++) {
-			if (adj[v][i] == 1 && !visited[i]) {
-				dfs(i);
-			}
-		}
-		
-		stack.add(v);
 	}
 }
