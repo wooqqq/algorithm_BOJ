@@ -1,8 +1,11 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.StringTokenizer;
 
+// BufferedReader + trim + StringBuilder
 public class Solution {
 
 	static int N, max;
@@ -13,23 +16,25 @@ public class Solution {
 	static List<int[]> worm;
 
 	public static void main(String[] args) throws IOException {
-		Scanner sc = new Scanner(System.in);
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+		StringTokenizer st;
 		StringBuilder sb;
 
-		int T = sc.nextInt();
+		int T = Integer.parseInt(br.readLine().trim());
 
 		for (int t = 1; t <= T; t++) {
 			sb = new StringBuilder();
 			sb.append("#" + t + " ");
 
-			N = sc.nextInt();
+			N = Integer.parseInt(br.readLine().trim());
 			map = new int[N][N];
 			worm = new ArrayList<>();
 
 			// 게임판 입력받기
 			for (int r = 0; r < N; r++) {
+				st = new StringTokenizer(br.readLine(), " ");
 				for (int c = 0; c < N; c++) {
-					map[r][c] = sc.nextInt();
+					map[r][c] = Integer.parseInt(st.nextToken());
 
 					// 해당 자리의 값이 웜볼인 경우
 					if (map[r][c] > 5 && map[r][c] < 11)
