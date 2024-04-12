@@ -7,12 +7,12 @@ import java.util.StringTokenizer;
 
 public class Main {
 
-	static int K, W, H, min;
+	static int K, W, H;
 	static int[][] map;
-	static int[] dx = { -1, 1, 0, 0 };
-	static int[] dy = { 0, 0, -1, 1 };
-	static int[] hx = { -2, -1, 1, 2, 2, 1, -1, -2 };
-	static int[] hy = { 1, 2, 2, 1, -1, -2, -2, -1 };
+	static int[] dr = { -1, 1, 0, 0 }; // 4방향 (상, 하, 좌, 우)
+	static int[] dc = { 0, 0, -1, 1 };
+	static int[] hr = { -2, -1, 1, 2, 2, 1, -1, -2 }; // 말 (시계방향)
+	static int[] hc = { 1, 2, 2, 1, -1, -2, -2, -1 };
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -25,9 +25,7 @@ public class Main {
 		H = Integer.parseInt(st.nextToken());
 
 		map = new int[H][W];
-		min = Integer.MAX_VALUE;
 
-		// 지도 입력받기
 		for (int r = 0; r < H; r++) {
 			st = new StringTokenizer(br.readLine());
 			for (int c = 0; c < W; c++) {
@@ -35,61 +33,54 @@ public class Main {
 			}
 		}
 
-
 		System.out.println(bfs(0, 0));
 	} // end of main
 
-	static int bfs(int x, int y) {
-		Queue<int[]> q = new LinkedList<>();
-		boolean[][][] check = new boolean[H][W][K + 1];
+	static int bfs(int r, int c) {
+		Queue<int[]> que = new LinkedList<>();
+		boolean[][][] visited = new boolean[H][W][K + 1];
+		
+		visited[r][c][0] = true;
+		que.add(new int[] { r, c, 0, 0 });
 
-		check[y][x][0] = true;
-		q.add(new int[] { x, y, 0, 0 });
-		while (!q.isEmpty()) {
-			int[] pos = q.poll();
-			int px = pos[0], py = pos[1];
-			int chance = pos[2], move = pos[3];
+		while (!que.isEmpty()) {
+			int[] now = que.poll();
+			int x = now[0], y = now[1];
+			int move = now[2], horse = now[3];
 
-			// 도착지점 리턴
-			if (px == W - 1 && py == H - 1) {
-				return move;
-			}
-
-			// 기본 이동 : 원숭이 4가지 방향 탐색
+			if (x == H - 1 && y == W - 1) return move;
+			
+			// 4방향 전진
 			for (int i = 0; i < 4; i++) {
-				int nx = px + dx[i];
-				int ny = py + dy[i];
-
-				if (nx < 0 || nx > W - 1 || ny < 0 || ny > H - 1)
+				int nx = x + dr[i];
+				int ny = y + dc[i];
+				
+				if (nx < 0 || nx >= H || ny < 0 || ny >= W)
 					continue;
-				if (check[ny][nx][chance])
-					continue;
+				if (visited[nx][ny][horse]) continue;
 
-				if (map[ny][nx] != 1) {
-					check[ny][nx][chance] = true;
-					q.add(new int[] { nx, ny, chance, move + 1 });
+				if (map[nx][ny] == 0) {
+					visited[nx][ny][horse] = true;
+					que.add(new int[] { nx, ny, move + 1, horse });
 				}
 			}
-
-			// 말 찬스 이동 : 찬스 남아있으면 말 8가지 방향 탐색
-			if (chance < K) {
+			
+			// 말 방향 전진
+			if (horse < K) {
 				for (int i = 0; i < 8; i++) {
-					int nx = px + hx[i];
-					int ny = py + hy[i];
-
-					if (nx < 0 || nx > W - 1 || ny < 0 || ny > H - 1)
-						continue;
-					if (check[ny][nx][chance + 1])
-						continue;
-
-					if (map[ny][nx] != 1) {
-						check[ny][nx][chance + 1] = true;
-						q.add(new int[] { nx, ny, chance + 1, move + 1 });
+					int hx = x + hr[i];
+					int hy = y + hc[i];
+					
+					if (hx < 0 || hx >= H || hy < 0 || hy >= W) continue;
+					if (visited[hx][hy][horse + 1]) continue;
+					
+					if (map[hx][hy] == 0) {
+						visited[hx][hy][horse + 1] = true;
+						que.add(new int[] {hx, hy, move + 1, horse + 1});
 					}
 				}
 			}
 		}
 		return -1;
 	}
-
 }
